@@ -164,3 +164,51 @@ func TestGetDirection(t *testing.T) {
 		}
 	}
 }
+
+func TestMove(t *testing.T) {
+	var tests = []struct {
+		name     string
+		floor    int
+		call     Call
+		input    []int
+		expected int
+	}{
+		{
+			"upwards too early",
+			0,
+			Call{2, Up},
+			[]int{1, 3},
+			1,
+		},
+		{
+			"upwards on the way",
+			0,
+			Call{1, Up},
+			[]int{2, 3},
+			1,
+		},
+		{
+			"downwards too early",
+			5,
+			Call{3, Down},
+			[]int{4, 2},
+			4,
+		},
+		{
+			"downwards on the way",
+			6,
+			Call{5, Down},
+			[]int{4, 3},
+			5,
+		},
+	}
+
+	for _, test := range tests {
+		lift := Lift{test.name, test.floor, test.input, true}
+		lift.Move(test.call.Floor)
+
+		if !reflect.DeepEqual(lift.Floor, test.expected) {
+			t.Errorf("%s: wanted '%v' but got '%v'\n", test.name, test.expected, lift.Floor)
+		}
+	}
+}

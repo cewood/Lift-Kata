@@ -41,6 +41,41 @@ func (l *Lift) GetDirection() Direction {
 	return Down
 }
 
+// Move ...
+func (l *Lift) Move(floor int) error {
+	if l.GetDirection() == Up && floor < l.Floor {
+		return errors.New("Requested floor is in wrong direction")
+	} else if l.GetDirection() == Down && floor > l.Floor {
+		return errors.New("Requested floor is in wrong direction")
+	}
+
+	// Close the doors
+	l.DoorsOpen = false
+
+	// Check which floor to visit first
+	if l.GetDirection() == Up && floor < l.Requests[0] {
+		// Go to called floor
+		l.Floor = floor
+	} else if l.GetDirection() == Down && floor > l.Requests[0] {
+		// Go to called floor
+		l.Floor = floor
+	} else if l.GetDirection() == None {
+		// Go to called floor
+		l.Floor = floor
+	} else {
+		// Go to already requested floor
+		l.Floor = l.Requests[0]
+	}
+
+	// Open the doors
+	l.DoorsOpen = true
+
+	// Fulfill requests
+	l.FulfillRequest()
+
+	return nil
+}
+
 // FulfillRequest handles removing a request from the queue
 //  if the current floor is present in the requests queue.
 //  It checks if the doors are open, and thus returns an
