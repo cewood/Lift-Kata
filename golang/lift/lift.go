@@ -27,6 +27,23 @@ type Lift struct {
 	DoorsOpen bool
 }
 
+// FulfillRequest handles removing a request from the queue
+//  if the current floor is present in the requests queue.
+//  It checks if the doors are open, and thus returns an
+//  error so that this can be caught and handled correctly.
+func (l *Lift) FulfillRequest() error {
+	if !l.DoorsOpen {
+		// You can't fulfill a request if the doors are closed
+		return errors.New("doors were closed")
+	}
+
+	if l.Requests[0] == l.Floor {
+		l.Requests = append(l.Requests[:0], l.Requests[1:]...)
+	}
+
+	return nil
+}
+
 // NewRequest handles adding a new request to the queue,
 //  which it maintains in a kind of balanced/pivot list.
 //  Whereby depending on the direction of the lift, the

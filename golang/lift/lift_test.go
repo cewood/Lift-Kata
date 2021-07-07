@@ -85,3 +85,46 @@ func TestNewRequest(t *testing.T) {
 		}
 	}
 }
+
+func TestFulfillRequest(t *testing.T) {
+	var tests = []struct {
+		name     string
+		floor    int
+		input    []int
+		expected []int
+	}{
+		{
+			"upwards ordered",
+			1,
+			[]int{1, 2, 3, 4, 5},
+			[]int{2, 3, 4, 5},
+		},
+		{
+			"upwards sorted change direction",
+			4,
+			[]int{4, 5, 6, 3, 2},
+			[]int{5, 6, 3, 2},
+		},
+		{
+			"downwards ordered",
+			5,
+			[]int{5, 4, 3, 2, 1},
+			[]int{4, 3, 2, 1},
+		},
+		{
+			"downwards sorted change direction",
+			6,
+			[]int{6, 5, 4, 7, 8},
+			[]int{5, 4, 7, 8},
+		},
+	}
+
+	for _, test := range tests {
+		lift := Lift{test.name, test.floor, test.input, true}
+		lift.FulfillRequest()
+
+		if !reflect.DeepEqual(lift.Requests, test.expected) {
+			t.Errorf("%s: wanted '%v' but got '%v'\n", test.name, test.expected, lift.Requests)
+		}
+	}
+}
