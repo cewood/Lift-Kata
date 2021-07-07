@@ -11,6 +11,7 @@ type Direction int
 const (
 	Up Direction = iota
 	Down
+	None
 )
 
 // Call ..
@@ -25,6 +26,19 @@ type Lift struct {
 	Floor     int
 	Requests  []int
 	DoorsOpen bool
+}
+
+// GetDirection is a helper function to quickly calculate
+//  the direction the lift is traveling based on the current
+//  floor of the lift and the first request pending
+func (l *Lift) GetDirection() Direction {
+	if len(l.Requests) == 0 {
+		return None
+	} else if l.Requests[0] > l.Floor {
+		return Up
+	}
+
+	return Down
 }
 
 // FulfillRequest handles removing a request from the queue

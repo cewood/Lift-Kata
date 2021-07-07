@@ -128,3 +128,39 @@ func TestFulfillRequest(t *testing.T) {
 		}
 	}
 }
+
+func TestGetDirection(t *testing.T) {
+	var tests = []struct {
+		name     string
+		floor    int
+		input    []int
+		expected Direction
+	}{
+		{
+			"upwards",
+			0,
+			[]int{1, 2},
+			Up,
+		},
+		{
+			"downwards",
+			7,
+			[]int{6, 3, 2},
+			Down,
+		},
+		{
+			"none",
+			0,
+			[]int{},
+			None,
+		},
+	}
+
+	for _, test := range tests {
+		lift := Lift{test.name, test.floor, test.input, true}
+
+		if !reflect.DeepEqual(lift.GetDirection(), test.expected) {
+			t.Errorf("%s: wanted '%v' but got '%v'\n", test.name, test.expected, lift.GetDirection())
+		}
+	}
+}
