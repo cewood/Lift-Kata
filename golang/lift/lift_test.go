@@ -212,3 +212,48 @@ func TestMove(t *testing.T) {
 		}
 	}
 }
+
+func TestSatisfyCalls(t *testing.T) {
+	var tests = []struct {
+		name     string
+		lifts    []Lift
+		input    []Call
+		expected []Call
+	}{
+		{
+			"satisfied, basic",
+			[]Lift{Lift{"one", 2, []int{3, 4}, true}},
+			[]Call{Call{2, Up}},
+			[]Call{},
+		},
+		{
+			"satisfied, multiple calls",
+			[]Lift{Lift{"one", 2, []int{3, 4}, true}},
+			[]Call{Call{2, Up}, Call{1, Down}},
+			[]Call{Call{1, Down}},
+		},
+		{
+			"not satisfied, doors closed",
+			[]Lift{Lift{"one", 2, []int{3, 4}, false}},
+			[]Call{Call{2, Up}},
+			[]Call{Call{2, Up}},
+		},
+		{
+			"not satisfied, wrong direction",
+			[]Lift{Lift{"one", 2, []int{3, 4}, true}},
+			[]Call{Call{2, Down}},
+			[]Call{Call{2, Down}},
+		},
+	}
+
+	for _, test := range tests {
+		system := NewSystem()
+		system.calls = test.input
+		system.lifts = test.lifts
+		system.SatisfyCalls()
+
+		if !reflect.DeepEqual(system.calls, test.expected) {
+			t.Errorf("%s: wanted '%v' but got '%v'\n", test.name, test.expected, system.calls)
+		}
+	}
+}

@@ -190,6 +190,18 @@ func (s System) CallsFor(floor int) (calls []Call) {
 	return calls
 }
 
+// SatisfyCalls ...
+func (s *System) SatisfyCalls() {
+	for i, call := range s.calls {
+		for _, lift := range s.lifts {
+			if call.Direction == lift.GetDirection() && call.Floor == lift.Floor && lift.DoorsOpen {
+				s.calls = append(s.calls[:i], s.calls[i+1:]...)
+				break
+			}
+		}
+	}
+}
+
 // Tick ..
 func (s System) Tick() {
 	panic("Implement this method")
