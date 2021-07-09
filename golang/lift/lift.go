@@ -174,6 +174,29 @@ func (l *Lift) NewRequest(req int) {
 	}
 }
 
+// Tick ...
+func (l *Lift) Tick() {
+	if l.DoorsOpen && l.GetNextRequest() != nil {
+		// If the doors are open, then we have already
+		//  visited a requested floor. Thus if there is
+		//  any remaining requests, we should close the
+		//  doors, because on the next tick we'll want
+		//  to move to the next requested floor
+		l.CloseDoors()
+	} else if !l.DoorsOpen && l.GetNextRequest() != nil && *l.GetNextRequest() == l.Floor {
+		// Open the doors requested floor
+		l.OpenDoors()
+
+		// Fulfill the request
+		l.FulfillRequest()
+	} else if !l.DoorsOpen && l.GetNextRequest() != nil {
+		// If the doors are closed, there are requests,
+		//  and the next request isn't for this floor,
+		//  then we should move to that floor
+		l.Move()
+	}
+}
+
 // System ..
 type System struct {
 	floors []int

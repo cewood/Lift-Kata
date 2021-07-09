@@ -383,3 +383,35 @@ func TestGetNextRequest(t *testing.T) {
 		}
 	}
 }
+
+func TestTick(t *testing.T) {
+	var tests = []struct {
+		name     string
+		input    Lift
+		expected Lift
+	}{
+		{
+			"close doors",
+			Lift{"test", 0, []int{2, 3}, true},
+			Lift{"test", 0, []int{2, 3}, false},
+		},
+		{
+			"open doors and fulfill request",
+			Lift{"test", 2, []int{2, 3}, false},
+			Lift{"test", 2, []int{3}, true},
+		},
+		{
+			"move",
+			Lift{"test", 2, []int{3}, false},
+			Lift{"test", 3, []int{3}, false},
+		},
+	}
+
+	for _, test := range tests {
+		test.input.Tick()
+
+		if !reflect.DeepEqual(test.input, test.expected) {
+			t.Errorf("%s: wanted '%v' but got '%v'\n", test.name, test.expected, test.input)
+		}
+	}
+}
