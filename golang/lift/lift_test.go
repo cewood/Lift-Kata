@@ -257,3 +257,59 @@ func TestSatisfyCalls(t *testing.T) {
 		}
 	}
 }
+
+func TestCloseDoors(t *testing.T) {
+	var tests = []struct {
+		name     string
+		input    bool
+		expected bool
+	}{
+		{
+			"open",
+			true,
+			false,
+		},
+		{
+			"closed",
+			false,
+			false,
+		},
+	}
+
+	for _, test := range tests {
+		lift := Lift{test.name, 0, []int{}, test.input}
+		lift.CloseDoors()
+
+		if !reflect.DeepEqual(lift.DoorsOpen, test.expected) {
+			t.Errorf("%s: wanted '%v' but got '%v'\n", test.name, test.expected, lift.DoorsOpen)
+		}
+	}
+}
+
+func TestOpenDoors(t *testing.T) {
+	var tests = []struct {
+		name     string
+		input    bool
+		expected bool
+	}{
+		{
+			"open",
+			true,
+			true,
+		},
+		{
+			"closed",
+			false,
+			true,
+		},
+	}
+
+	for _, test := range tests {
+		lift := Lift{test.name, 0, []int{}, test.input}
+		lift.OpenDoors()
+
+		if !reflect.DeepEqual(lift.DoorsOpen, test.expected) {
+			t.Errorf("%s: wanted '%v' but got '%v'\n", test.name, test.expected, lift.DoorsOpen)
+		}
+	}
+}

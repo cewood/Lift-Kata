@@ -28,6 +28,16 @@ type Lift struct {
 	DoorsOpen bool
 }
 
+// CloseDoors ...
+func (l *Lift) CloseDoors() {
+	l.DoorsOpen = false
+}
+
+// OpenDoors ...
+func (l *Lift) OpenDoors() {
+	l.DoorsOpen = true
+}
+
 // GetDirection is a helper function to quickly calculate
 //  the direction the lift is traveling based on the current
 //  floor of the lift and the first request pending
