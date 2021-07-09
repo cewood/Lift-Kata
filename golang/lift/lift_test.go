@@ -356,3 +356,30 @@ func TestMoveDown(t *testing.T) {
 		}
 	}
 }
+
+func TestGetNextRequest(t *testing.T) {
+	var tests = []struct {
+		name     string
+		input    []int
+		expected *int
+	}{
+		{
+			"success",
+			[]int{1, 2},
+			func() *int { i := 1; return &i }(),
+		},
+		{
+			"empty",
+			[]int{},
+			nil,
+		},
+	}
+
+	for _, test := range tests {
+		lift := Lift{test.name, 0, test.input, true}
+
+		if !reflect.DeepEqual(lift.GetNextRequest(), test.expected) {
+			t.Errorf("%s: wanted '%v' but got '%v'\n", test.name, test.expected, lift.GetNextRequest())
+		}
+	}
+}

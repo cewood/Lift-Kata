@@ -89,10 +89,13 @@ func (l *Lift) Move() error {
 	return err
 }
 
-	// Fulfill requests
-	l.FulfillRequest()
+// GetNextRequest ...
+func (l *Lift) GetNextRequest() *int {
+	if len(l.Requests) == 0 {
+		return nil
+	}
 
-	return nil
+	return &l.Requests[0]
 }
 
 // FulfillRequest handles removing a request from the queue
