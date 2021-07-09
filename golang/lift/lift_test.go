@@ -168,47 +168,36 @@ func TestGetDirection(t *testing.T) {
 func TestMove(t *testing.T) {
 	var tests = []struct {
 		name     string
-		floor    int
-		call     Call
-		input    []int
+		input    Lift
 		expected int
 	}{
 		{
-			"upwards too early",
-			0,
-			Call{2, Up},
-			[]int{1, 3},
+			"move up",
+			Lift{"up lift", 0, []int{2, 3}, false},
 			1,
 		},
 		{
-			"upwards on the way",
-			0,
-			Call{1, Up},
-			[]int{2, 3},
+			"move down",
+			Lift{"down lift", 3, []int{1, 0}, false},
+			2,
+		},
+		{
+			"don't move",
+			Lift{"stationary lift", 2, []int{}, false},
+			2,
+		},
+		{
+			"failure",
+			Lift{"fail lift", 1, []int{2}, true},
 			1,
-		},
-		{
-			"downwards too early",
-			5,
-			Call{3, Down},
-			[]int{4, 2},
-			4,
-		},
-		{
-			"downwards on the way",
-			6,
-			Call{5, Down},
-			[]int{4, 3},
-			5,
 		},
 	}
 
 	for _, test := range tests {
-		lift := Lift{test.name, test.floor, test.input, true}
-		lift.Move(test.call.Floor)
+		test.input.Move()
 
-		if !reflect.DeepEqual(lift.Floor, test.expected) {
-			t.Errorf("%s: wanted '%v' but got '%v'\n", test.name, test.expected, lift.Floor)
+		if !reflect.DeepEqual(test.input.Floor, test.expected) {
+			t.Errorf("%s: wanted '%v' but got '%v'\n", test.name, test.expected, test.input.Floor)
 		}
 	}
 }
@@ -310,6 +299,60 @@ func TestOpenDoors(t *testing.T) {
 
 		if !reflect.DeepEqual(lift.DoorsOpen, test.expected) {
 			t.Errorf("%s: wanted '%v' but got '%v'\n", test.name, test.expected, lift.DoorsOpen)
+		}
+	}
+}
+
+func TestMoveUp(t *testing.T) {
+	var tests = []struct {
+		name     string
+		input    Lift
+		expected int
+	}{
+		{
+			"success",
+			Lift{"success lift", 1, []int{}, false},
+			2,
+		},
+		{
+			"failure",
+			Lift{"failure lift", 1, []int{}, true},
+			1,
+		},
+	}
+
+	for _, test := range tests {
+		test.input.MoveUp()
+
+		if !reflect.DeepEqual(test.input.Floor, test.expected) {
+			t.Errorf("%s: wanted '%v' but got '%v'\n", test.name, test.expected, test.input.Floor)
+		}
+	}
+}
+
+func TestMoveDown(t *testing.T) {
+	var tests = []struct {
+		name     string
+		input    Lift
+		expected int
+	}{
+		{
+			"success",
+			Lift{"success lift", 1, []int{}, false},
+			0,
+		},
+		{
+			"failure",
+			Lift{"failure lift", 1, []int{}, true},
+			1,
+		},
+	}
+
+	for _, test := range tests {
+		test.input.MoveDown()
+
+		if !reflect.DeepEqual(test.input.Floor, test.expected) {
+			t.Errorf("%s: wanted '%v' but got '%v'\n", test.name, test.expected, test.input.Floor)
 		}
 	}
 }

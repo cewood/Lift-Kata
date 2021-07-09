@@ -51,34 +51,43 @@ func (l *Lift) GetDirection() Direction {
 	return Down
 }
 
-// Move ...
-func (l *Lift) Move(floor int) error {
-	if l.GetDirection() == Up && floor < l.Floor {
-		return errors.New("Requested floor is in wrong direction")
-	} else if l.GetDirection() == Down && floor > l.Floor {
-		return errors.New("Requested floor is in wrong direction")
+// MoveUp moves the lift upwards one floor at a time
+func (l *Lift) MoveUp() error {
+	if l.DoorsOpen {
+		return errors.New("The lift doors are open, can't move")
 	}
 
-	// Close the doors
-	l.DoorsOpen = false
+	l.Floor++
+
+	return nil
+}
+
+// MoveDown moves the lift downwards one floor at a time
+func (l *Lift) MoveDown() error {
+	if l.DoorsOpen {
+		return errors.New("The lift doors are open, can't move")
+	}
+
+	l.Floor--
+
+	return nil
+}
+
+// Move ...
+func (l *Lift) Move() error {
+	var err error
 
 	// Check which floor to visit first
-	if l.GetDirection() == Up && floor < l.Requests[0] {
-		// Go to called floor
-		l.Floor = floor
-	} else if l.GetDirection() == Down && floor > l.Requests[0] {
-		// Go to called floor
-		l.Floor = floor
-	} else if l.GetDirection() == None {
-		// Go to called floor
-		l.Floor = floor
-	} else {
-		// Go to already requested floor
-		l.Floor = l.Requests[0]
+	if l.GetDirection() == Up {
+		// Move upwards
+		err = l.MoveUp()
+	} else if l.GetDirection() == Down {
+		// Move downwards
+		err = l.MoveDown()
 	}
 
-	// Open the doors
-	l.DoorsOpen = true
+	return err
+}
 
 	// Fulfill requests
 	l.FulfillRequest()
