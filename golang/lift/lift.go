@@ -2,6 +2,7 @@ package lift
 
 import (
 	"errors"
+	"time"
 )
 
 // Direction ..
@@ -235,6 +236,31 @@ func (s System) CallsFor(floor int) (calls []Call) {
 	return calls
 }
 
+// TickLifts ...
+func (s *System) TickLifts() {
+	calls := make([]Call, len(s.calls))
+	copy(calls, s.calls)
+
+	// Iterate over our lifts
+	for _, lift := range s.lifts {
+		// Iterate over the calls
+		for i, call := range calls {
+			// Check if the
+			if call.Direction == lift.GetDirection() && call.Floor > lift.Floor && call.Floor < lift.Requests[0] {
+				lift.NewRequest(call.Floor)
+				calls = append(calls[:i], calls[i+1:]...)
+				break
+			} else if call.Direction == lift.GetDirection() && call.Floor < lift.Floor && call.Floor > lift.Requests[0] {
+				lift.NewRequest(call.Floor)
+				calls = append(calls[:i], calls[i+1:]...)
+				break
+			}
+		}
+
+		lift.Tick()
+	}
+}
+
 // SatisfyCalls ...
 func (s *System) SatisfyCalls() {
 	for i, call := range s.calls {
@@ -248,6 +274,15 @@ func (s *System) SatisfyCalls() {
 }
 
 // Tick ..
-func (s System) Tick() {
-	panic("Implement this method")
+func (s System) Tick(count int, duration time.Duration) {
+	for {
+		// Check for any satisfied calls
+		s.SatisfyCalls()
+
+		// Tick lifts
+		s.TickLifts()
+
+		// Sleep
+		time.Sleep(time.Duration(count) * duration)
+	}
 }
